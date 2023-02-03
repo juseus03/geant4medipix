@@ -213,12 +213,16 @@ void DetectorConstructionBase::ConstructSDandField()
     // check if already created
     sensorSD = dynamic_cast<DetectorSD *>(G4SDManager::GetSDMpointer()->FindSensitiveDetector("SensorSD", false));
 
+    G4cout<<"DetectorConstructionBase::ConstructSDandField() checking SD"<<G4endl;
     if (!sensorSD) {
         // create a new sensitive detector
         sensorSD = new DetectorSD("SensorSD", "SensorHitsCollection", nPixel * nPixel);
+        G4SDManager::GetSDMpointer()->AddNewDetector(sensorSD);
+        
+        G4cout<<"DetectorConstructionBase::ConstructSDandField() created new SensorSD"<<G4endl;
     }
 
-    SetSensitiveDetector("pixel_cell", sensorSD);
+    SetSensitiveDetector("pixel_cell", sensorSD, true);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -35,9 +35,10 @@
 
 #include "globals.hh"
 // choose one of the three output file formats
-#include "g4root.hh"
+// #include "g4root.hh"
 //#include "g4xml.hh"
 //#include "g4hbook.hh"
+#include "G4AnalysisManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

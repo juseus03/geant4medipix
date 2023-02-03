@@ -38,6 +38,13 @@
 #include "G4RunManager.hh"
 #include "G4Run.hh"
 
+#include "G4Gamma.hh"
+#include "G4Electron.hh"
+#include "G4Positron.hh"
+#include "G4Alpha.hh"
+#include "G4Neutron.hh"
+#include "G4Proton.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorSD::DetectorSD(
@@ -65,6 +72,7 @@ void DetectorSD::Initialize(G4HCofThisEvent *hce)
     //G4int hcID = GetCollectionID(0);
 
     // Create hits collection
+    // G4cout<<"DetectorSD::Initialize() creating hitsCollection in "<<SensitiveDetectorName <<" with name "<<collectionName[0]<<G4endl;
     fHitsCollection
         = new DetectorHitsCollection(SensitiveDetectorName, collectionName[0]);
 
@@ -75,19 +83,16 @@ void DetectorSD::Initialize(G4HCofThisEvent *hce)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-#include "G4Gamma.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4Alpha.hh"
-#include "G4Neutron.hh"
-#include "G4Proton.hh"
-
 G4bool DetectorSD::ProcessHits(G4Step *step, G4TouchableHistory *)
 {
-    // energy deposit
+
+    //  G4cout << "DetectorSD::ProcessHits()::1" << G4endl;
+	// energy deposit
     G4double edep = step->GetTotalEnergyDeposit();
     G4ThreeVector pos = step->GetTrack()->GetPosition();
-
+	
+    //  G4cout << "DetectorSD::ProcessHits():: got edep" << G4endl;
+	 
     // get particle and create ID
     G4String particle = step->GetTrack()->GetParticleDefinition()->GetParticleName();
     G4int particleID = 0;
@@ -118,12 +123,17 @@ G4bool DetectorSD::ProcessHits(G4Step *step, G4TouchableHistory *)
     if (step->GetTrack()->GetDefinition()->GetPDGCharge() != 0.) {
         stepLength = step->GetStepLength();
     } 
+	
+	// G4cout << "DetectorSD::ProcessHits():: 2" << G4endl;
     // add hit if energy deposit > 0 and step particle came to rest
     if (edep == 0. && stepLength == 0.) {
+		// G4cout << "DetectorSD::ProcessHits():: not processed" << G4endl;
         return false;
     } else {
         G4TouchableHistory *touchable
             = (G4TouchableHistory *)(step->GetPreStepPoint()->GetTouchable());
+			
+		// G4cout << "DetectorSD::ProcessHits():: succesfull touchable" << G4endl;
 
         // Get Detector cell id
         G4int lineNumber = touchable->GetReplicaNumber(1);
@@ -134,11 +144,30 @@ G4bool DetectorSD::ProcessHits(G4Step *step, G4TouchableHistory *)
         const G4Event *currentEvent = fRM->GetCurrentEvent();
         eventNb = currentEvent->GetEventID();
 
+		// G4cout << "DetectorSD::ProcessHits():: succesfull currentEvent" << G4endl;
+
         DetectorHit *hit = new DetectorHit();
         
         // add hit information to hits collection
         hit->Add(edep, stepLength, pos, columnNumber, lineNumber, eventNb, particleID, time);
+		
+		// G4cout << "DetectorSD::ProcessHits():: succesfull hit added" << G4endl;
+		// G4cout << edep<< G4endl;
+        // G4cout << stepLength << G4endl; 
+        // G4cout << pos<< G4endl; 
+        // G4cout << columnNumber<< G4endl; 
+        // G4cout << lineNumber<< G4endl; 
+        // G4cout << eventNb<< G4endl; 
+        // G4cout << particleID<< G4endl;
+        // G4cout << time << G4endl;
+
+
+		// G4cout << "DetectorSD::ProcessHits():: fHitsCollection"<<fHitsCollection->entries() << G4endl;
+		
         fHitsCollection->insert(hit);
+		
+		// G4cout << "DetectorSD::ProcessHits():: succesfull inserted hit in collection" << G4endl;
+		// G4cout << "DetectorSD::ProcessHits():: saved" << G4endl;
 
         return true;
     }

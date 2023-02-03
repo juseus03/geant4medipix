@@ -334,6 +334,11 @@ G4VPhysicalVolume *DetectorConstructionDefault::DefineVolumes()
         G4cout << "Bumps: " << bumpMaterial->GetName() << " with r: " << bumpRadii / um << "um and h: " << bumpHeight / um << "um " << G4endl;
     else
         G4cout << "Bumps: disabled" << G4endl;
+    
+    if (block == true)
+        G4cout <<"Block: "<< actX / um << "um of Fe at"<< actPosZ / um << "um" << G4endl;
+    else
+        G4cout <<"Block: disabled" << G4endl; 
 
 
 
@@ -389,7 +394,8 @@ G4VPhysicalVolume *DetectorConstructionDefault::DefineVolumes()
     worldVisAtt->SetVisibility(true);
     //worldLV->SetVisAttributes(worldVisAtt);
 
-    worldLV->SetVisAttributes(G4VisAttributes::Invisible);
+    // worldLV->SetVisAttributes(G4VisAttributes::Invisible);
+    worldLV->SetVisAttributes(G4VisAttributes::GetInvisible());
 
 //     G4VisAttributes * flVisAtt1 = new G4VisAttributes(G4Colour(1.,0.,0.));
 //     fluorescenceLV1->SetVisAttributes(flVisAtt1);

@@ -74,7 +74,7 @@
 
 #include "G4IonPhysics.hh"
 #include "G4EmExtraPhysics.hh"
-#include "G4EmProcessOptions.hh"
+// #include "G4EmProcessOptions.hh"
 
 
 #include "G4HadronInelasticQBBC.hh"
@@ -107,7 +107,8 @@
 #include "G4Proton.hh"
 #include "G4DNAGenericIonsManager.hh"
 
-
+#include "G4NuclideTable.hh"
+#include "G4SystemOfUnits.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
 
@@ -120,6 +121,9 @@ PhysicsList::PhysicsList() : G4VModularPhysicsList()
     fMessenger = new PhysicsListMessenger(this);
 
     G4LossTableManager::Instance();
+   
+    const G4double meanLife = 1*nanosecond, halfLife = meanLife*std::log(2);
+    G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(halfLife);
 
     // Particles
     fParticleList = new G4DecayPhysics("decays", verboseLevel);
@@ -161,8 +165,8 @@ void PhysicsList::ConstructProcess()
     fRadioactiveDecayList->ConstructProcess();
     G4RadioactiveDecay *radioactiveDecay = new G4RadioactiveDecay();
     radioactiveDecay->SetVerboseLevel(verboseLevel);
-    radioactiveDecay->SetHLThreshold(nanosecond);
-    radioactiveDecay->SetICM(true);
+    // radioactiveDecay->SetHLThreshold(nanosecond);
+    // radioactiveDecay->SetICM(true);
     radioactiveDecay->SetARM(false);
 
     for (size_t i = 0; i < fHadronPhys.size(); i++) {
@@ -367,4 +371,3 @@ void PhysicsList::List()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-

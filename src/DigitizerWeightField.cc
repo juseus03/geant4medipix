@@ -178,9 +178,14 @@ void DigitizerWeightField::Digitize()
 
     map<pair<G4int, G4int>, G4double * > *inducedPixelContent = new map<pair<G4int, G4int>, G4double * >;
 
+    // G4cout<<"DigitizerWeightField::Digi Collection created "<<G4endl;
+    // G4cout<<"DigitizerWeightField::Digi "<<hitCollection->entries()<<G4endl;
+    
+    if (hitCollection == nullptr ) return;
+    
     G4int nEntries = hitCollection->entries();
-    if (nEntries == 0) return;
 
+    // G4cout<<"DigitizerWeightField::Digi nEntries "<<nEntries<<G4endl;
     G4int event = -1;
 
 
@@ -236,6 +241,9 @@ void DigitizerWeightField::Digitize()
         }
     }
 
+    // G4cout<<"DigitizerWeightField:: end iteration over hits "<<G4endl;
+
+
     //write induced current peaks to file (before preamp)
     if (writePeakToFile == true) {
         std::ofstream myfile;
@@ -259,17 +267,22 @@ void DigitizerWeightField::Digitize()
         }
     }
 
+    // G4cout<<"DigitizerWeightField:: wrote peak file: "<<writePeakToFile<<G4endl;
+
+
 
     // Electronics
     preamp->GetPixelResponse(inducedPixelContent, digitCollection, event);
+    // G4cout<<"DigitizerWeightField:: GetPixelResponse"<<G4endl;
 
     // Store the digit collection in the Digitizer Manager so it's available in the Run class
     StoreDigiCollection(digitCollection);
+    // G4cout<<"DigitizerWeightField:: digiCollectin sotored "<<writePeakToFile<<G4endl;
 
     //add pixel events to digitizer hit collection
 
     // TODO: The old export code runs from here, but has been disabled in favor of hdf5 export. This could (should?) be fixed
-    //detector->AddPixelEvents(digitCollection);
+    // detector->AddPixelEvents(digitCollection);
 
     //print the contents of the digitCollection to the console
     /*

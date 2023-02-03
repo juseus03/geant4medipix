@@ -126,9 +126,15 @@ void EventAction::EndOfEventAction(const G4Event *event)
 
     G4String digitizerName = myDet->GetDigitizerName();
 
+    // G4cout<<"EventAction::EndOfEventAction() digitizerName: "<<digitizerName<<G4endl;
+
     // call digitizer after every event
     G4DigiManager *digiManager = G4DigiManager::GetDMpointer();
-    DigitizerWeightField *digiModule = (DigitizerWeightField *) (digiManager->FindDigitizerModule(digitizerName));
+
+    // digiManager->List(); //List of all registered digitizer modules
+
+    // DigitizerWeightField *digiModule = (DigitizerWeightField *) (digiManager->FindDigitizerModule(digitizerName));
+    DigitizerWeightField *digiModule = (DigitizerWeightField *) (digiManager->FindDigitizerModule("DigitizerWeightField"));
     digiModule->Digitize();
 
     if (fEnergyPerEvent > 0.) {

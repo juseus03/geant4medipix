@@ -57,8 +57,8 @@ public:
     inline void  operator delete(void *);
 
     // methods from base class
-    virtual void Draw() {}
-    virtual void Print();
+    void Draw() override {}
+    void Print() override;
 
     // methods to handle data
     void Add(G4double de, G4double dl, G4ThreeVector pos, G4int column, G4int line, G4int event, G4int particleID, G4double time);
@@ -97,15 +97,15 @@ inline void *DetectorHit::operator new(size_t)
 {
     if (!DetectorHitAllocator)
         DetectorHitAllocator = new G4Allocator<DetectorHit>;
-    void *hit;
-    hit = (void *) DetectorHitAllocator->MallocSingle();
-    return hit;
+    // void *hit;
+    // hit = (void *) DetectorHitAllocator->MallocSingle();
+    return (void *) DetectorHitAllocator->MallocSingle();
 }
 
 inline void DetectorHit::operator delete(void *hit)
 {
-    if (!DetectorHitAllocator)
-        DetectorHitAllocator = new G4Allocator<DetectorHit>;
+    // if (!DetectorHitAllocator)
+    //     DetectorHitAllocator = new G4Allocator<DetectorHit>;
     DetectorHitAllocator->FreeSingle((DetectorHit *) hit);
 }
 

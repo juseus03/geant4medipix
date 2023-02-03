@@ -69,7 +69,7 @@ public:
     virtual void   EndOfEvent(G4HCofThisEvent *hitCollection);
 
 private:
-    DetectorHitsCollection *fHitsCollection;
+    DetectorHitsCollection *fHitsCollection = nullptr;
     G4int     fNofCells;
     G4int     nPixels;
     G4int     eventNb;

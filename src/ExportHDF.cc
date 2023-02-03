@@ -198,6 +198,11 @@ void ExportHDF::WritePixels(MpxDigitCollection *dc) {
 
         if ( x > pixel_size || y > pixel_size) {
             G4cout << "Found a digit in event " << d->GetEvent() << " larger than pixel matrix. Throwing it away" << G4endl;
+            G4cout << "ExportHDF::WritePixels() pixel_size: "<<pixel_size<<G4endl;
+            G4cout << "ExportHDF::WritePixels() x: "<<x<<G4endl;
+            G4cout << "ExportHDF::WritePixels() y: "<<y<<G4endl;
+            G4cout << "ExportHDF::WritePixels() p1: "<<(d->GetColumn() - 1)*nb <<G4endl;
+            G4cout << "ExportHDF::WritePixels() p2: "<<(d->GetLine() - 1) <<G4endl;
             continue;
         }
 
@@ -206,9 +211,10 @@ void ExportHDF::WritePixels(MpxDigitCollection *dc) {
             if ( i == dc->GetSize() - 1 ) {
                 pixels[x] = d->GetToT();
                 pixels[y] = d->GetToA();
+               G4cout << "Update pixels per event " << event << " ToT " << pixels[x] << " ToA "<<pixels[y]<< G4endl;
             }
 
-            // G4cout << "Writing sparse pixels output per event " << event << " to HDF5. Digits: " << i << G4endl;
+            G4cout << "Writing sparse pixels output per event " << event << " to HDF5. Digits: " << i << G4endl;
 
             // Open dataset
             G4String tableName = "/g4medipix/" + std::to_string(event);

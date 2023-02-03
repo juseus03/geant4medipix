@@ -63,6 +63,7 @@ public:
     void SetPixelSize(G4double);
     void SetTpxMode(G4String);
     inline void SetDigitizerName(G4String digitizer) {
+        G4cout<<"DetectorConstructionBase.hh SetDigitizerName(): "<<digitizer<< G4endl;
         digitizerName = digitizer;
     }
     void SetDetectorType(G4String);
@@ -138,7 +139,7 @@ public:
     }
     inline void SetBlockWidth(G4double h) {
         actX = h;
-	actY = h;
+	    actY = h;
     }
 
     //Output
@@ -266,7 +267,9 @@ public:
         return hdf5Filename;
     }
     G4String GetStoreTraj() {
-        return storeTraj;
+
+        return std::to_string(storeTraj);
+        // return storeTraj;
     }
 
 

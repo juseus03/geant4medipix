@@ -34,21 +34,12 @@
 
 #include "PrimaryGeneratorMessenger.hh"
 
-#ifdef G4MULTITHREADED
-#include "G4MTRunManager.hh"
-#else
-#include "G4RunManager.hh"
-#endif
+#include "G4RunManagerFactory.hh"
 
 #include "G4UImanager.hh"
 
-#ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
-#endif
-
-#ifdef G4UI_USE
 #include "G4UIExecutive.hh"
-#endif
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -104,53 +95,48 @@ int main(int argc, char **argv) {
 
     // Construct the default run manager
     //
+    auto runManager = G4RunManagerFactory::CreateRunManager(); 
 #ifdef G4MULTITHREADED
-    G4MTRunManager *runManager = new G4MTRunManager;
+    G4cout << "Set number of threads "<<nThreads<<G4endl;
     runManager->SetNumberOfThreads(nThreads);
-#else
-    G4RunManager *runManager = new G4RunManager;
 #endif
 
     // Set mandatory initialization classes
     //
-    DetectorConstructionBase *detConstruction = new DetectorConstructionDefault();
-    runManager->SetUserInitialization(detConstruction);
+    runManager->SetUserInitialization(new DetectorConstructionDefault);
+    runManager->SetUserInitialization(new PhysicsList);
+    runManager->SetUserInitialization(new ActionInitialization);
 
-    PhysicsList *physicsList = new PhysicsList();
-    runManager->SetUserInitialization(physicsList);
-
-    ActionInitialization *actionInitialization = new ActionInitialization();
-    runManager->SetUserInitialization(actionInitialization);
 
     PrimaryGeneratorMessenger::GetInstance();
 
-#ifdef G4VIS_USE
-    // Initialize visualization
-    G4VisManager *visManager = new G4VisExecutive("Quiet");
-    visManager->Initialize();
-#endif
-
     // Get the pointer to the User Interface manager
     G4UImanager *UImanager = G4UImanager::GetUIpointer();
+	
+    G4VisManager* visManager = nullptr;
 
     if (!macro.empty()) {
         // batch mode
         G4String command = "/control/execute ";
+        G4cout<<"Batch mode ..."<<G4endl;
         UImanager->ApplyCommand(command + macro);
     } else {
         // interactive mode : define UI session
-#ifdef G4UI_USE
+        G4cout<<"Interactive mode ..."<<G4endl;
+        runManager->Initialize();
+
+
         G4UIExecutive *ui = new G4UIExecutive(argc, argv, session);
-#ifdef G4VIS_USE
+
+        visManager = new G4VisExecutive("Quiet");
+        visManager->Initialize();
+
         UImanager->ApplyCommand("/control/execute init_vis.mac");
-#else
-        UImanager->ApplyCommand("/control/execute init.mac");
-#endif
+
         if (ui->IsGUI())
             UImanager->ApplyCommand("/control/execute gui.mac");
         ui->SessionStart();
         delete ui;
-#endif
     }
 
     // Job termination
@@ -158,9 +144,7 @@ int main(int argc, char **argv) {
     // owned and deleted by the run manager, so they should not be deleted
     // in the main() program !
 
-#ifdef G4VIS_USE
     delete visManager;
-#endif
     delete runManager;
     return 0;
 }
