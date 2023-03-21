@@ -212,6 +212,7 @@ void ExportHDF::WritePixels(MpxDigitCollection *dc) {
                 pixels[x] = d->GetToT();
                 pixels[y] = d->GetToA();
                G4cout << "Update pixels per event " << event << " ToT " << pixels[x] << " ToA "<<pixels[y]<< G4endl;
+               G4cout << "Update pixel " << x << " " << y << G4endl;
             }
 
             G4cout << "Writing sparse pixels output per event " << event << " to HDF5. Digits: " << i << G4endl;
